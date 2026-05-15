@@ -12,10 +12,10 @@
 #define PANEL_CHAIN 1      
 
 MatrixPanel_I2S_DMA *dma_display = nullptr;
-
+ 
 //config_network_and_time
-char ssid[] = ""; 
-char pass[] = ""; 
+char ssid[] = "ALKAALDE"; 
+char pass[] = "Alkaalde111"; 
 #define TZ (+7*60*60) //configurasi WIB (GMT+7)
 
 bool flasher = false;
@@ -124,6 +124,7 @@ void updateTime() {
   }
 }
 
+
 void setup() {
   //print_log_serial_monitor(baudrate 115200) 
   Serial.begin(115200);
@@ -154,6 +155,8 @@ void setup() {
     delay(1000);
   }
   
+   printLocalTime();
+
   Serial.println("\n[OK] konfigurasi Jam sudah Berhasil Sinkron!");
 
   HUB75_I2S_CFG mxconfig(PANEL_RES_X, PANEL_RES_Y, PANEL_CHAIN);
@@ -172,6 +175,20 @@ void setup() {
   updateTime();
   Date_text();
   dofw_text();
+}
+
+void printLocalTime() {
+  struct tm timeinfo;
+  if (!getLocalTime(&timeinfo)) {
+    Serial.println("[ERROR] Gagal mendapatkan waktu untuk log");
+    return;
+  }
+  
+  char timeStringBuff[30]; 
+  strftime(timeStringBuff, sizeof(timeStringBuff), "[%Y-%m-%d %H:%M:%S]", &timeinfo);
+  
+  Serial.print(timeStringBuff);
+  Serial.println(" -> System Running OK");
 }
 
 void loop() {
